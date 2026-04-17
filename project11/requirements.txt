@@ -1,0 +1,12 @@
+paramiko
+python-dotenv
+sshtunnel
+fastapi
+hypercorn
+pydantic
+python-multipart
+requests
+numpy
+openai
+opencv-python
+tqdm

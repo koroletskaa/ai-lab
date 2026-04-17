@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Емоційний трекер</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💓 Емоційний трекер</h1>
+            <div class="device-status">
+                <span id="device-status" class="status-indicator offline">Пристрій не підключено</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Секція поточного стану -->
+            <section class="current-status">
+                <div class="status-card pulse-card">
+                    <h2>Поточний пульс</h2>
+                    <div class="pulse-display">
+                        <span id="current-pulse" class="pulse-value">--</span>
+                        <span class="pulse-unit">BPM</span>
+                    </div>
+                    <div class="pulse-info">
+                        <span id="pulse-timestamp">Очікування даних...</span>
+                    </div>
+                </div>
+
+                <div class="status-card emotion-card">
+                    <h2>Швидкий запис емоції</h2>
+                    <form id="emotion-form" class="emotion-form">
+                        <div class="form-group">
+                            <label for="emotion-select">Емоція</label>
+                            <select id="emotion-select" required>
+                                <option value="">Оберіть емоцію</option>
+                                <option value="радість">😊 Радість</option>
+                                <option value="спокій">😌 Спокій</option>
+                                <option value="тривога">😰 Тривога</option>
+                                <option value="страх">😨 Страх</option>
+                                <option value="сум">😢 Сум</option>
+                                <option value="злість">😠 Злість</option>
+                                <option value="нейтральність">😐 Нейтральність</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="intensity">Інтенсивність (1-10)</label>
+                            <input type="range" id="intensity" min="1" max="10" value="5" required>
+                            <div class="intensity-display">
+                                <span id="intensity-value">5</span>/10
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Опис ситуації (необов'язково)</label>
+                            <textarea id="description" rows="3" placeholder="Що сталося?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Додати запис</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Графіки -->
+            <section class="charts-section">
+                <h2>Графіки та аналітика</h2>
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="pulse">Пульс</button>
+                    <button class="tab-button" data-tab="emotions">Емоції</button>
+                    <button class="tab-button" data-tab="correlation">Кореляція</button>
+                </div>
+
+                <div class="tab-content active" id="tab-pulse">
+                    <div id="pulse-chart" class="chart-container"></div>
+                </div>
+
+                <div class="tab-content" id="tab-emotions">
+                    <div id="emotions-chart" class="chart-container"></div>
+                </div>
+
+                <div class="tab-content" id="tab-correlation">
+                    <div id="correlation-chart" class="chart-container"></div>
+                </div>
+            </section>
+
+            <!-- Журнал записів -->
+            <section class="journal-section">
+                <h2>Журнал емоцій</h2>
+                <div class="journal-controls">
+                    <button id="refresh-journal" class="btn btn-secondary">Оновити</button>
+                    <select id="journal-filter">
+                        <option value="all">Всі емоції</option>
+                        <option value="радість">Радість</option>
+                        <option value="спокій">Спокій</option>
+                        <option value="тривога">Тривога</option>
+                        <option value="страх">Страх</option>
+                        <option value="сум">Сум</option>
+                        <option value="злість">Злість</option>
+                        <option value="нейтральність">Нейтральність</option>
+                    </select>
+                </div>
+                <div id="journal-entries" class="journal-entries">
+                    <p class="loading">Завантаження...</p>
+                </div>
+            </section>
+
+            <!-- Статистика -->
+            <section class="stats-section">
+                <h2>Статистика</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Середній пульс (24 год)</h3>
+                        <div class="stat-value" id="avg-pulse">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Найчастіша емоція</h3>
+                        <div class="stat-value" id="most-common-emotion">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Середня інтенсивність</h3>
+                        <div class="stat-value" id="avg-intensity">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Записів за тиждень</h3>
+                        <div class="stat-value" id="total-entries">--</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Поради ШІ -->
+            <section class="ai-section">
+                <h2>Поради ШІ</h2>
+                <p class="ai-disclaimer">
+                    Це не медична консультація і не замінює роботу лікаря чи психотерапевта.
+                    Використовуйте поради як мʼяку підтримку та нагадування про турботу про себе.
+                </p>
+                <div class="ai-controls">
+                    <select id="ai-period">
+                        <option value="1">Аналіз за останній день</option>
+                        <option value="7" selected>Аналіз за останній тиждень</option>
+                        <option value="30">Аналіз за останній місяць</option>
+                    </select>
+                    <button id="get-ai-advice" class="btn btn-primary">Отримати пораду ШІ</button>
+                </div>
+                <div id="ai-advice" class="ai-advice-box">
+                    <p class="empty-state">Натисніть кнопку, щоб отримати персоналізовані поради на основі ваших даних.</p>
+                </div>
+            </section>
+
+            <!-- Звіти -->
+            <section class="reports-section">
+                <h2>Звіти</h2>
+                <div class="report-controls">
+                    <select id="report-period">
+                        <option value="1">Останній день</option>
+                        <option value="7" selected>Останній тиждень</option>
+                        <option value="30">Останній місяць</option>
+                    </select>
+                    <button id="generate-report" class="btn btn-primary">Згенерувати звіт</button>
+                </div>
+                <div id="report-content" class="report-content"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

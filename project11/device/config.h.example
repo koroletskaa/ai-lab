@@ -1,0 +1,20 @@
+/*
+ * Файл конфігурації для пристрою
+ * Скопіюйте цей файл в config.h та заповніть свої дані
+ */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// Wi-Fi налаштування
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+// URL сервера бекенду
+#define SERVER_URL "http://192.168.1.100:8000/api/pulse"
+
+// Піни (за потреби змінити для вашого пристрою)
+#define PULSE_SENSOR_PIN A0
+
+#endif
+
